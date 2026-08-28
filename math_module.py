@@ -1,0 +1,16 @@
+print(min(9,7,5,8,4,5))
+print(max(9,7,5,8,4,5))
+print(abs(-5))
+print(pow(2,3))
+print(2**3)
+print(2^3)
+import math
+print(math.pi)
+print(math.e)
+print(math.sqrt(16))
+print(math.ceil(2.3))
+print(math.floor(2.3))
+
+print(math.sin(45))
+print(math.cos(45))
+print(math.tan(45))
