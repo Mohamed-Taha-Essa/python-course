@@ -1,26 +1,22 @@
 {% extends 'blog/base.html' %}
 
+  
 
 {% block content %}
-
 
     <div class="container py-5">
 
         <!-- Page Header -->
         <div class="text-center mb-5">
-            {% block title %}
-                <h1>Blog Posts</h1>
-                
-            {% endblock %}
-            <p class="text-muted">
-                Explore our latest blog posts
-            </p>
+           {% block title %} <h1 class="fw-bold">{{ post.title }}</h1>  
+                                                            {% endblock %}
+          
         </div>
 
         <!-- Posts -->
         <div class="row g-4">
 
-            {% for post in posts %}
+         
 
                 <div class="col-md-6 col-lg-4">
 
@@ -64,7 +60,7 @@
                             <!-- Button -->
                             <div class="mt-auto">
                                 <a
-                                    href="{{ post.id }}/"
+                                    href="#"
                                     class="btn btn-primary"
                                 >
                                     Read More
@@ -77,15 +73,8 @@
 
                 </div>
 
-            {% empty %}
 
-                <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        No posts available.
-                    </div>
-                </div>
-
-            {% endfor %}
+        
 
         </div>
 
