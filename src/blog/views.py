@@ -1,10 +1,81 @@
-from django.shortcuts import render
+from django.shortcuts import render ,redirect
 from .models import Post
 from django.shortcuts import get_object_or_404
 from datetime import date
+from .forms import PostForm ,CommentForm
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator ,PageNotAnInteger ,EmptyPage
 # Create your views here.
 
 def post_list(request):
+    
+    all_posts = Post.objects.all()
+    paginator = Paginator(all_posts ,5)
+    page_number =request.GET.get('page')
+    try:
+        posts = paginator.page(page_number)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request ,'blog/post_list.html', {'posts': posts})
+
+
+
+
+
+def post_detail(request, slug):
+    # try:
+    #     post = Post.objects.get(id=id)
+    # except Post.DoesNotExist:
+    #     post = None
+    #     return render(request, 'blog/post_not_found.html', {})
+
+    post = get_object_or_404(Post,slug=slug)
+    return render(request ,'blog/post_detail.html', {'post' : post})
+
+def post_create(request):
+    author = User.objects.all()[1]
+    print(author.username)
+    if request.method =='POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            print('form is valid')
+            post =form.save(commit=False)
+            post.author = author
+          
+            post.save()
+            print('post is created')
+
+            return redirect('blog:post_detail', id=post.id)
+        else :
+            print('form is not valid')
+    else:
+        form = PostForm()
+    return render(request ,'blog/post_form.html' ,{'form':form})
+
+def comment_create(request ,id):
+    post = Post.objects.get(id=id)
+    
+    if request.method =='POST':
+        form =CommentForm(request.POST)
+        if form.is_valid():
+            print('form is valid')
+            comment =form.save(commit=False)
+            comment.post = post
+          
+            comment.save()
+            print('comment is created')
+
+            return redirect('blog:post_detail', id=post.id)
+        else :
+            print('form is not valid')
+    else:
+        form = CommentForm()
+    return render(request ,'blog/comment_form.html' ,{'form':form})
+
+# def post_list(request):
     # posts = Post.objects.all()
     # posts = Post.objects.filter(status='draft').order_by('-publish')
     #queryset on date and time
@@ -52,18 +123,7 @@ def post_list(request):
    
    #slicing
     # posts = Post.objects.all()[:6] 
-    posts = Post.objects.all()[2:6] 
+    # posts = Post.objects.all()
     
 
-    return render(request ,'blog/post_list.html', {'posts': posts})
-
-
-def post_detail(request, id):
-    # try:
-    #     post = Post.objects.get(id=id)
-    # except Post.DoesNotExist:
-    #     post = None
-    #     return render(request, 'blog/post_not_found.html', {})
-
-    post = get_object_or_404(Post, id=id)
-    return render(request ,'blog/post_detail.html', {'post' : post})
+    # return render(request ,'blog/post_list.html', {'posts': posts})

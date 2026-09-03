@@ -1,0 +1,20 @@
+
+<nav class="pagination justify-content-center mt-5" aria-label="Post pages">
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-2">
+
+        {% if page.has_previous %}
+            <a class="btn btn-outline-primary" href="?page=1">&laquo; First</a>
+            <a class="btn btn-outline-primary" href="?page={{ page.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="btn btn-light disabled">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+
+        {% if page.has_next %}
+            <a class="btn btn-outline-primary" href="?page={{ page.next_page_number }}">Next</a>
+            <a class="btn btn-outline-primary" href="?page={{ page.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+
+    </div>
+</nav>

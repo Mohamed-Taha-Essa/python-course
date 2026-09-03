@@ -64,7 +64,7 @@
                             <!-- Button -->
                             <div class="mt-auto">
                                 <a
-                                    href="{{ post.id }}/"
+                                    href="{{ post.slug }}/"
                                     class="btn btn-primary"
                                 >
                                     Read More
@@ -86,8 +86,9 @@
                 </div>
 
             {% endfor %}
-
         </div>
+
+            {% include "blog/pagination.html" with page=posts %}
 
     </div>
 

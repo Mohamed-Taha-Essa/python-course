@@ -8,7 +8,7 @@ django.setup()
 
 
 from django.contrib.auth.models import User
-from blog.models import Post  
+from blog.models import Post  ,Comment
 
 from faker import Faker
 
@@ -33,4 +33,18 @@ def create_dummy_data(num_users=5, num_posts=20):
         Post.objects.create(author=author, title=title, body=body, slug=slug)
         print(f"Created post: {title}")
     print(f"Created {num_users} users and {num_posts} posts.")
-create_dummy_data()
+
+import random
+def create_comments(num_coments = 3):
+    posts = Post.objects.all()
+    users= User.objects.all()
+    for post in posts:
+        for i in range(num_coments):
+            
+            name = users[random.randrange(len(users))]
+            email = fake.email()
+            body = fake.paragraph(nb_sentences=2)
+            Comment.objects.create(post=post ,name=name ,email = email ,body = body)
+
+# create_dummy_data()
+create_comments()
