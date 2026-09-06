@@ -2,10 +2,52 @@ from django.shortcuts import render ,redirect
 from .models import Post
 from django.shortcuts import get_object_or_404
 from datetime import date
-from .forms import PostForm ,CommentForm
+from .forms import PostForm ,CommentForm , EmailPostForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator ,PageNotAnInteger ,EmptyPage
+from django.core.mail import send_mail
 # Create your views here.
+
+def post_share(request ,slug):
+    # get the post 
+    post =get_object_or_404(Post , slug =slug)
+    sent =False
+
+    if request.method == 'POST':
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+             # Build the full URL for the post
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            # print(cd)
+            # print('name is : ',cd['name'])
+            # print('emais is : ',cd['email'])
+            # print('to is : ',cd['to'])
+            # print('comments is ' ,cd['comments'])
+            # sendin email basic
+           # Compose the email
+            subject = (
+                f"{cd['name']} recommends you read \"{post.title}\""
+            )
+            message = (
+                f"Read \"{post.title}\" at {post_url}\n\n"
+                f"{cd['name']}'s comments: {cd['comments']}"
+            )
+
+            # Send the email
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=cd['email'],
+                recipient_list=[cd['to']],
+            )
+            sent=True
+            # background task celery sendin emain by cal it
+
+    else :
+        form = EmailPostForm()
+    context = {'post':post ,'form':form ,'sent':sent}
+    return render(request,'blog/share_post.html' , context)
 
 def post_list(request):
     
