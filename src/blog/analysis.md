@@ -2,9 +2,15 @@ user can create multiple post
 post created by one user 
 
 
-name 
+<!-- name 
 content 
 from 
 to 
 
-model  , form
+model  , form -->
+
+- crud operation 
+    - create  --
+    - read  --list ,detail
+    - update --
+    - delete --

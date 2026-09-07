@@ -16,11 +16,34 @@
                 Explore our latest blog posts
             </p>
         </div>
+        <div class="mt-auto">
+            <a
+                    href="{% url 'blog:post_create' %}" 
+                class="btn btn-primary"
+            >
+                Create Post
+            </a>
+        </div>
+            <form method="get" class="mb-4">
+        <div class="input-group">
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Search posts..."
+                value="{{ request.GET.q|default:'' }}"
+            >
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+    </div>
+</form>
 
         <!-- Posts -->
         <div class="row g-4">
 
-            {% for post in posts %}
+            {% for post in object_list %}
 
                 <div class="col-md-6 col-lg-4">
 
@@ -64,8 +87,7 @@
                             <!-- Button -->
                             <div class="mt-auto">
                                 <a
-                                    {% comment %} href="{% url 'blog:post_detail' post.slug %}/" {% endcomment %}
-                                    href = "{{ post.get_absolute_url }}"
+                                     href="{% url 'blog:post_detail' post.id %}" 
                                     class="btn btn-primary"
                                 >
                                     Read More
@@ -89,7 +111,7 @@
             {% endfor %}
         </div>
 
-            {% include "blog/pagination.html" with page=posts %}
+            {% include "blog/pagination.html" with page=page_obj %}
 
     </div>
 

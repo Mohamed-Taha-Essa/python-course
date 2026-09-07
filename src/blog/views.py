@@ -61,21 +61,46 @@ def post_list(request):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
 
-    return render(request ,'blog/post_list.html', {'posts': posts})
+    return render(request ,'blog/post_list.html', {'object_list': posts})
 
 
 
 
 
 def post_detail(request, slug):
-    # try:
-    #     post = Post.objects.get(id=id)
-    # except Post.DoesNotExist:
-    #     post = None
-    #     return render(request, 'blog/post_not_found.html', {})
 
     post = get_object_or_404(Post,slug=slug)
-    return render(request ,'blog/post_detail.html', {'post' : post})
+    form = CommentForm()
+    post_comments = post.comments.all()
+    print('===============' , post_comments , len(post_comments))
+    context = {'post' : post ,'post_comments' : post_comments ,'form':form}  
+    return render(request ,'blog/post_detail.html', context)
+
+def post_update(request ,slug):
+    post = get_object_or_404(Post ,slug = slug)
+    if request.method =='POST':
+            form = PostForm(request.POST ,instance=post)
+            if form.is_valid():
+                print('form is valid')             
+                post.save()
+                print('post is saved')
+    
+                return redirect('blog:post_detail',slug=slug)
+            else :
+                print('form is not valid')
+    else:   
+        form = PostForm(instance =post)
+    return render(request ,'blog/post_form.html' ,{'form':form})
+
+
+def post_delete(request,slug):
+    post = get_object_or_404(Post,slug=slug)
+    if request.method =='POST':
+        post.delete()
+        return redirect('blog:post_list')
+    return render(request ,'blog/post_confirm_delete.html' ,{'post':post})
+
+
 
 def post_create(request):
     author = User.objects.all()[1]
@@ -97,8 +122,8 @@ def post_create(request):
         form = PostForm()
     return render(request ,'blog/post_form.html' ,{'form':form})
 
-def comment_create(request ,id):
-    post = Post.objects.get(id=id)
+def comment_create(request ,slug):
+    post = Post.objects.get(slug=slug)
     
     if request.method =='POST':
         form =CommentForm(request.POST)
@@ -110,12 +135,12 @@ def comment_create(request ,id):
             comment.save()
             print('comment is created')
 
-            return redirect('blog:post_detail', id=post.id)
+            return redirect('blog:post_detail', slug=post.slug)
         else :
             print('form is not valid')
     else:
         form = CommentForm()
-    return render(request ,'blog/comment_form.html' ,{'form':form})
+    return render(request ,'blog/comment_form.html' ,{'form':form ,'post':post})
 
 # def post_list(request):
     # posts = Post.objects.all()
